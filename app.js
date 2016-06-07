@@ -95,8 +95,6 @@ window.onload = function () {
     player = new Me(document.getElementById('myCanvas').getContext('2d'), "bandit");
     player.centerX = 500;
     player.centerY = 500;
-    document.getElementById('myCanvas').clientWidth = innerWidth;
-    document.getElementById('myCanvas').clientHeight = innerHeight;
     document.onmousemove = function (ev) {
         player.Redraw(ev.x, ev.y);
     };
