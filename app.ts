@@ -53,7 +53,7 @@ class Player{
     
     redraw() {
 
-        this.img.src = '\\players\\' + this.name + '\\img' + (Math.round(this.direction / 360 * this.picCount) * 360 / this.picCount) % 360 + '.png';
+        this.img.src = 'players\\' + this.name + '\\img' + (Math.round(this.direction / 360 * this.picCount) * 360 / this.picCount) % 360 + '.png';
         reset(document.getElementById('myCanvas'));
         this.canvas.drawImage(this.img,this.x,this.y);
     }
