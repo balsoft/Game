@@ -4,7 +4,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var content;
-var timers = new Array();
 var player;
 var Timer = (function () {
     function Timer(handler, tag) {
@@ -13,14 +12,19 @@ var Timer = (function () {
     }
     Timer.prototype.start = function (interval) {
         this.id = setInterval(this.handler, interval);
+        Timer.timers.push(this);
+        // console.log(this.tag+' is created');
     };
     Timer.prototype.stop = function () {
         clearInterval(this.id);
     };
     Timer.prototype.destroy = function () {
         this.stop();
+        Timer.timers.splice(Timer.timers.indexOf(this), 1);
+        //console.log(this.tag+' is destroyed');
         delete this;
     };
+    Timer.timers = new Array();
     return Timer;
 }());
 function reset(canvas) {
@@ -28,13 +32,12 @@ function reset(canvas) {
 }
 var Player = (function () {
     function Player(canvas, name) {
-        this.picCount = 4;
+        this.picCount = 8;
         this.x = 0;
         this.y = 0;
         this.img = new Image;
         this.canvas = canvas;
         this.name = name;
-        this.redraw();
     }
     Object.defineProperty(Player.prototype, "centerX", {
         get: function () {
@@ -57,7 +60,8 @@ var Player = (function () {
         configurable: true
     });
     Player.prototype.redraw = function () {
-        this.img.src = '\\players\\' + this.name + '\\img' + (Math.round(this.direction / 360 * this.picCount) * 360 / this.picCount) % 360 + '.png';
+        console.log(this.mods);
+        this.img.src = 'players\\' + this.name + '\\img' + this.mods + (Math.round(this.direction / 360 * this.picCount) * 360 / this.picCount) % 360 + '.png';
         reset(document.getElementById('myCanvas'));
         this.canvas.drawImage(this.img, this.x, this.y);
     };
@@ -71,17 +75,23 @@ var Me = (function (_super) {
     Me.prototype.move = function (ch) {
         switch (ch) {
             case 'KeyW':
-                this.centerY--;
+                this.centerY -= 5;
                 break;
             case 'KeyS':
-                this.centerY++;
+                this.centerY += 5;
                 break;
             case 'KeyD':
-                this.centerX++;
+                this.centerX += 5;
                 break;
             case 'KeyA':
-                this.centerX--;
+                this.centerX -= 5;
                 break;
+        }
+        if (this.mods == '') {
+            this.mods = 'wk';
+        }
+        else {
+            this.mods = '';
         }
         this.redraw();
     };
@@ -93,21 +103,22 @@ var Me = (function (_super) {
 }(Player));
 window.onload = function () {
     content = document.getElementById('content');
-    player = new Me(document.getElementById('myCanvas').getContext('2d'), "bandit");
+    player = new Me(document.getElementById('myCanvas').getContext('2d'), "velo");
     player.centerX = 500;
     player.centerY = 500;
+    document.fullscreenEnabled = true;
     document.onmousemove = function (ev) {
         player.Redraw(ev.x, ev.y);
     };
+    document.onmousedown = document.onmousemove;
     document.onkeydown = function (event) {
         if (!event.repeat) {
-            timers.unshift(new Timer(function () { player.move(event.code); }, event.code));
-            timers[0].start(2);
+            new Timer(function () { player.move(event.code); }, event.code).start(200);
         }
     };
     document.onkeyup = function (ev) {
-        console.log(timers.filter(function (value) { return (value.tag == ev.code); })[0]);
-        timers.filter(function (value) { return (value.tag == ev.code); })[0].destroy();
+        //  console.log(Timer.timers.filter((value: Timer) => { return (value.tag == ev.code) })[0]);
+        Timer.timers.filter(function (value) { return (value.tag == ev.code); })[0].destroy();
     };
 };
 //# sourceMappingURL=app.js.map
