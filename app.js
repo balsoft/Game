@@ -95,9 +95,11 @@ window.onload = function () {
     player = new Me(document.getElementById('myCanvas').getContext('2d'), "bandit");
     player.centerX = 500;
     player.centerY = 500;
+    document.fullscreenEnabled = true;
     document.onmousemove = function (ev) {
         player.Redraw(ev.x, ev.y);
     };
+    document.onmousedown = document.onmousemove;
     document.onkeydown = function (event) {
         if (!event.repeat) {
             timers.unshift(new Timer(function () { player.move(event.code); }, event.code));

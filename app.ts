@@ -83,9 +83,11 @@ window.onload = () => {
     player = new Me(document.getElementById('myCanvas').getContext('2d'), "bandit");
     player.centerX = 500;
     player.centerY = 500;
+    document.fullscreenEnabled = true;
     document.onmousemove = (ev: MouseEvent) => {
         player.Redraw(ev.x, ev.y);
     }
+    document.onmousedown = document.onmousemove;
     document.onkeydown = (event: KeyboardEvent) => {
         if (!event.repeat) {
             timers.unshift(new Timer(() => { player.move(event.code) }, event.code));
